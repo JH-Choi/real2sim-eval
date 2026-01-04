@@ -47,7 +47,8 @@ def ransac_icp(scene_gs_input_path, robot_bbox, do_visualization=True):
     confidence = 0.999
 
     print("[1/6] Loading point clouds…")
-    urdf_path = 'assets/robots/xarm/xarm7_with_gripper.urdf'
+    # urdf_path = 'assets/robots/xarm/xarm7_with_gripper.urdf'
+    urdf_path = '/mnt/hdd/code/Dongki_project/real2sim-eval/assets/robots/xarm/xarm7_with_gripper.urdf'
     link_names = [
         'link1',
         'link2',
@@ -143,7 +144,8 @@ def ransac_icp(scene_gs_input_path, robot_bbox, do_visualization=True):
 
 
 def segment_robot(scene_gs_input_path, scene_gs_save_path, scene_mask_save_path, gs_to_robo, do_visualization=True):
-    urdf_path = 'assets/robots/xarm/xarm7_with_gripper.urdf'
+    # urdf_path = 'assets/robots/xarm/xarm7_with_gripper.urdf'
+    urdf_path = '/mnt/hdd/code/Dongki_project/real2sim-eval/assets/robots/xarm/xarm7_with_gripper.urdf'
     link_names = [
         'link1',
         'link2',
@@ -227,14 +229,15 @@ def segment_robot(scene_gs_input_path, scene_gs_save_path, scene_mask_save_path,
     robot_pcd.colors = o3d.utility.Vector3dVector(scan_colors)
     if do_visualization:
         visualize_list([robot_pcd, scene_pcd])
+        visualize_list([robot_pcd])
 
     total_mask_full = np.zeros(pts.shape[0], dtype=np.int32) - 1
     total_mask_full[pts_is_robot_mask] = robot_mask
     total_mask_full = total_mask_full.astype(np.int32)
 
-    np.save(scene_mask_save_path, total_mask_full)
-    sp.save(params, scene_gs_save_path)
-    sp.visualize_gs([scene_gs_save_path], transform=False, merged=False, axis_on=True)
+    # np.save(scene_mask_save_path, total_mask_full)
+    # sp.save(params, scene_gs_save_path)
+    # sp.visualize_gs([scene_gs_save_path], transform=False, merged=False, axis_on=True)
 
 
 if __name__ == '__main__':
@@ -245,22 +248,33 @@ if __name__ == '__main__':
 
     if args.construct:
         # constructing gripper scene gs
-        scene_gs_input_path = 'log/gs/scans/scene_gripper/scene_gripper_raw.ply'
-        scene_gs_save_path = 'log/gs/scans/scene_gripper/scene_gripper.ply'
-        scene_mask_save_path = 'log/gs/scans/scene_gripper/scene_gripper_mask.npy'
+        # scene_gs_input_path = 'log/gs/scans/scene_gripper/scene_gripper_raw.ply'
+        # scene_gs_save_path = 'log/gs/scans/scene_gripper/scene_gripper.ply'
+        # scene_mask_save_path = 'log/gs/scans/scene_gripper/scene_gripper_mask.npy'
+
+        data_path = '/mnt/hdd/data/Robot_data/phystwin_data/gs_scans/scene_gripper/'
+        scene_gs_input_path = os.path.join(data_path, 'scene_gripper_raw.ply')
+        scene_gs_save_path = os.path.join(data_path, 'scene_gripper.ply')
+        scene_mask_save_path = os.path.join(data_path, 'scene_gripper_mask.npy')
+
         robot_bbox = np.array([
             [-0.5, 0.5],
             [-0.3, 0.3],
             [0.1, 0.8],
         ])
         gs_to_robo = ransac_icp(scene_gs_input_path, robot_bbox, do_visualization=False)
-        segment_robot(scene_gs_input_path, scene_gs_save_path, scene_mask_save_path, gs_to_robo, do_visualization=False)
+        # gs_to_robo = ransac_icp(scene_gs_input_path, robot_bbox, do_visualization=True)
+        # segment_robot(scene_gs_input_path, scene_gs_save_path, scene_mask_save_path, gs_to_robo, do_visualization=False)
+        segment_robot(scene_gs_input_path, scene_gs_save_path, scene_mask_save_path, gs_to_robo, do_visualization=True)
 
     if args.visualize:
         # visualize
+        data_path = '/mnt/hdd/data/Robot_data/phystwin_data/gs_scans/scene_gripper/'
+        scene_gs_save_path = os.path.join(data_path, 'scene_gripper.ply')
+        scene_mask_save_path = os.path.join(data_path, 'scene_gripper_mask.npy')
         control_robot_with_gripper(
-            params_path='log/gs/scans/scene_gripper/scene_gripper.ply', 
-            total_mask_path='log/gs/scans/scene_gripper/scene_gripper_mask.npy',
+            params_path=scene_gs_save_path, 
+            total_mask_path=scene_mask_save_path,
             qpos=[10, -20, 30, 15, 4, 54, 20],
             gripper_openness=100
         )

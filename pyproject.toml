@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "real2sim-eval"
 version = "0.1.0"
@@ -5,9 +9,9 @@ description = ""
 requires-python = ">=3.11"
 dependencies = [
   # Core runtime
-  "torch==2.7.1",
-  "torchvision>=0.21.0",
-  "torchcodec==0.4.0",
+  #"torch==2.7.1",
+  #"torchvision>=0.21.0",
+  #"torchcodec==0.4.0",
   "triton==3.3.1",
 
   # General utilities
@@ -33,7 +37,6 @@ dependencies = [
   "pyrender",
   "sapien==2.2.2",
   "plyfile",
-  "kornia",
 
   # JAX stack
   "jax==0.5.3",
@@ -62,3 +65,11 @@ dependencies = [
   "wandb==0.21.3",
   "ipdb",
 ]
+
+# Tell setuptools exactly which packages to include from your flat repo.
+# Adjust the names in "include" to match your actual top-level folders.
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["sim*", "cfg*", "real2sim_eval*"]
+exclude = ["tests*", "docs*", "examples*"]
+

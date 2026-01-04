@@ -44,6 +44,8 @@ class RobotPcSampler:
             loader = self.scene.create_urdf_loader()
         self.sapien_robot = loader.load(urdf_path)
         self.robot_model = self.sapien_robot.create_pinocchio_model()
+        ## TODO: Debug
+        # print(self.sapien_robot.get_links())
         self.urdf_robot = URDF.load(urdf_path)
 
         # load meshes and offsets from urdf_robot
@@ -175,6 +177,8 @@ class RobotPcSampler:
                 if link.name == link_name:
                     link_idx_ls.append(link_idx)
                     break
+        # for link_idx in link_idx_ls:
+        #     print(self.robot_model.get_link_pose(link_idx))
         link_pose_ls = np.stack([np.asarray(self.robot_model.get_link_pose(link_idx).to_transformation_matrix()) for link_idx in link_idx_ls])
         meshes_ls = [self.meshes[link_name] for link_name in link_names]
         offsets_ls = [self.offsets[link_name] for link_name in link_names]
